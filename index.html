@@ -53,6 +53,7 @@
       max-width: 400px;
       margin-bottom: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
     }
 
     .balance-label {
@@ -260,7 +261,8 @@
 
   <div class="user-info" id="user-display">A carregar utilizador...</div>
 
-  <div class="balance-card">
+  <!-- Cartão de Saldo: Toque 3 vezes seguidas nele para adicionar +700 pontos de teste -->
+  <div class="balance-card" id="balance-card" onclick="handleSecretTestPoints()">
     <div class="balance-label">Saldo Disponível</div>
     <div class="balance-value" id="balance-points">0</div>
     <div class="balance-subtext">Pontos (Meta: 1000 = Retirada TON)</div>
@@ -282,7 +284,7 @@
     </div>
   </div>
 
-  <!-- Recompensa Diária Turbinada -->
+  <!-- Recompensa Diária -->
   <div class="section-title">Recompensa Diária</div>
   <div class="tasks-container">
     <div class="task-card">
@@ -294,7 +296,7 @@
     </div>
   </div>
 
-  <!-- Tarefas de Exploração Turbinadas -->
+  <!-- Tarefas de Exploração -->
   <div class="section-title">Tarefas de Exploração</div>
   <div class="tasks-container">
     <div class="task-card">
@@ -359,7 +361,6 @@
       userDisplay.textContent = "Ambiente de Teste Local";
     }
 
-    // Link de indicação dinâmico
     const botUsername = "Zindoprofx_bot";
     const refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
 
@@ -390,7 +391,7 @@
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
-    // Gestão de tarefas únicas
+    // Gestão de tarefas
     const completedTasks = JSON.parse(localStorage.getItem('completed_tasks') || '[]');
     completedTasks.forEach(taskId => {
       const btn = document.getElementById(`btn-task-${taskId}`);
@@ -454,11 +455,35 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
+    // Atalho de teste para o administrador: 3 cliques no cartão de saldo somam +700 pontos
+    let clickCount = 0;
+    let clickTimer = null;
+    function handleSecretTestPoints() {
+      clickCount++;
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+
+      if (clickCount >= 3) {
+        clickCount = 0;
+        balance += 700;
+        localStorage.setItem('user_balance', balance.toString());
+        document.getElementById('balance-points').textContent = balance;
+        tg.showAlert(`Modo Administrador: +700 pontos adicionados! Saldo total: ${balance}`);
+      }
+    }
+
+    // Fluxo Oficial com Meta de 1000 Pontos
     function handleWithdraw() {
-      if (balance >= 1000) {
-        tg.showAlert("Parabéns! Atingiu a meta de 1000 pontos. O pedido foi submetido com sucesso!");
+      const minThreshold = 1000;
+      if (balance >= minThreshold) {
+        const wallet = prompt("Parabéns! Atingiu a meta de 1000 pontos.\nInsira o seu endereço de carteira TON (ex: UQ... ou EQ...):");
+        if (wallet && wallet.trim().length > 10) {
+          tg.showAlert(`✅ Pedido de Retirada Confirmado!\n\nValor: 0.1 TON\nCarteira: ${wallet}\nPrazo de Envio: 24 a 48 horas úteis.`);
+        } else if (wallet !== null) {
+          tg.showAlert("Endereço de carteira inválido. Certifique-se de colar o endereço TON correto.");
+        }
       } else {
-        tg.showAlert(`Você precisa de pelo menos 1000 pontos. Saldo atual: ${balance}`);
+        tg.showAlert(`Você precisa de pelo menos ${minThreshold} pontos. Saldo atual: ${balance}`);
       }
     }
   </script>
