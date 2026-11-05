@@ -53,7 +53,6 @@
       max-width: 400px;
       margin-bottom: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-      cursor: pointer;
     }
 
     .balance-label {
@@ -261,11 +260,11 @@
 
   <div class="user-info" id="user-display">A carregar utilizador...</div>
 
-  <!-- Cartão de Saldo: Toque 3 vezes seguidas nele para adicionar +700 pontos de teste -->
-  <div class="balance-card" id="balance-card" onclick="handleSecretTestPoints()">
+  <!-- Cartão de Saldo -->
+  <div class="balance-card">
     <div class="balance-label">Saldo Disponível</div>
     <div class="balance-value" id="balance-points">0</div>
-    <div class="balance-subtext">Pontos (Meta: 1000 = Retirada TON)</div>
+    <div class="balance-subtext">Pontos (Meta: 1000 = Retirada 0.1 TON)</div>
   </div>
 
   <!-- Sistema de Convites -->
@@ -354,9 +353,10 @@
     const user = tg.initDataUnsafe?.user;
     const userDisplay = document.getElementById('user-display');
     const userId = user?.id || 'demo';
+    const username = user?.username ? `@${user.username}` : (user?.first_name || 'Utilizador');
 
     if (user) {
-      userDisplay.textContent = `ID: ${user.id} | @${user.username || user.first_name}`;
+      userDisplay.textContent = `ID: ${user.id} | ${username}`;
     } else {
       userDisplay.textContent = "Ambiente de Teste Local";
     }
@@ -455,32 +455,31 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
-    // Atalho de teste para o administrador: 3 cliques no cartão de saldo somam +700 pontos
-    let clickCount = 0;
-    let clickTimer = null;
-    function handleSecretTestPoints() {
-      clickCount++;
-      clearTimeout(clickTimer);
-      clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-
-      if (clickCount >= 3) {
-        clickCount = 0;
-        balance += 700;
-        localStorage.setItem('user_balance', balance.toString());
-        document.getElementById('balance-points').textContent = balance;
-        tg.showAlert(`Modo Administrador: +700 pontos adicionados! Saldo total: ${balance}`);
-      }
-    }
-
-    // Fluxo Oficial com Meta de 1000 Pontos
+    // Fluxo Oficial de Levantamento (1000 Pontos)
     function handleWithdraw() {
       const minThreshold = 1000;
       if (balance >= minThreshold) {
         const wallet = prompt("Parabéns! Atingiu a meta de 1000 pontos.\nInsira o seu endereço de carteira TON (ex: UQ... ou EQ...):");
         if (wallet && wallet.trim().length > 10) {
+          // Desconta os 1000 pontos após a submissão
+          balance -= minThreshold;
+          localStorage.setItem('user_balance', balance.toString());
+          document.getElementById('balance-points').textContent = balance;
+
+          // Envia os dados para o bot fechar e registar no chat
+          if (tg.sendData) {
+            tg.sendData(JSON.stringify({
+              action: "withdraw",
+              amount: "0.1 TON",
+              wallet: wallet.trim(),
+              userId: userId,
+              username: username
+            }));
+          }
+
           tg.showAlert(`✅ Pedido de Retirada Confirmado!\n\nValor: 0.1 TON\nCarteira: ${wallet}\nPrazo de Envio: 24 a 48 horas úteis.`);
         } else if (wallet !== null) {
-          tg.showAlert("Endereço de carteira inválido. Certifique-se de colar o endereço TON correto.");
+          tg.showAlert("Endereço de carteira inválido. Certifique-se de colar o seu endereço TON correto.");
         }
       } else {
         tg.showAlert(`Você precisa de pelo menos ${minThreshold} pontos. Saldo atual: ${balance}`);
