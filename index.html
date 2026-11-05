@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TON Task Rewards</title>
-  <!-- Telegram Web App SDK oficial -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -267,7 +266,7 @@
     <div class="balance-subtext">Pontos (Meta: 1000 = Retirada 0.1 TON)</div>
   </div>
 
-  <!-- Sistema de Convites -->
+  <!-- Programa de Indicação -->
   <div class="section-title">Programa de Indicação</div>
   <div class="card-block">
     <div class="referral-header">
@@ -295,47 +294,47 @@
     </div>
   </div>
 
-  <!-- Tarefas de Exploração -->
+  <!-- Tarefas de Exploração Monetizadas -->
   <div class="section-title">Tarefas de Exploração</div>
   <div class="tasks-container">
     <div class="task-card">
       <div class="task-details">
-        <span class="task-title">Conhecer a Rede TON</span>
+        <span class="task-title">Oferta Patrocinada 1</span>
         <span class="task-reward">+150 Pontos</span>
       </div>
-      <button class="btn-action" id="btn-task-1" onclick="handleTask(1, 150, 'https://ton.org')">Visitar</button>
+      <button class="btn-action" id="btn-task-1" onclick="handleTask(1, 150, 'https://uplcm.com/4/12198670')">Visitar</button>
     </div>
 
     <div class="task-card">
       <div class="task-details">
-        <span class="task-title">Entrar no Canal Parceiro</span>
-        <span class="task-reward">+200 Pontos</span>
-      </div>
-      <button class="btn-action" id="btn-task-2" onclick="handleTask(2, 200, 'https://t.me/telegram')">Entrar</button>
-    </div>
-
-    <div class="task-card">
-      <div class="task-details">
-        <span class="task-title">Explorador TON Scan</span>
-        <span class="task-reward">+100 Pontos</span>
-      </div>
-      <button class="btn-action" id="btn-task-3" onclick="handleTask(3, 100, 'https://tonscan.org')">Verificar</button>
-    </div>
-
-    <div class="task-card">
-      <div class="task-details">
-        <span class="task-title">Carteiras TON Oficial</span>
+        <span class="task-title">Conferir Anúncio Parceiro</span>
         <span class="task-reward">+150 Pontos</span>
       </div>
-      <button class="btn-action" id="btn-task-4" onclick="handleTask(4, 150, 'https://ton.org/wallets')">Explorar</button>
+      <button class="btn-action" id="btn-task-2" onclick="handleTask(2, 150, 'https://uplcm.com/4/12198670')">Aceder</button>
     </div>
 
     <div class="task-card">
       <div class="task-details">
-        <span class="task-title">DApps da Rede TON</span>
+        <span class="task-title">Oferta Patrocinada 2</span>
         <span class="task-reward">+150 Pontos</span>
       </div>
-      <button class="btn-action" id="btn-task-5" onclick="handleTask(5, 150, 'https://ton.app')">Aceder</button>
+      <button class="btn-action" id="btn-task-3" onclick="handleTask(3, 150, 'https://uplcm.com/4/12198670')">Verificar</button>
+    </div>
+
+    <div class="task-card">
+      <div class="task-details">
+        <span class="task-title">Explorar Novidades</span>
+        <span class="task-reward">+150 Pontos</span>
+      </div>
+      <button class="btn-action" id="btn-task-4" onclick="handleTask(4, 150, 'https://uplcm.com/4/12198670')">Explorar</button>
+    </div>
+
+    <div class="task-card">
+      <div class="task-details">
+        <span class="task-title">Visitar Site Patrocinador</span>
+        <span class="task-reward">+150 Pontos</span>
+      </div>
+      <button class="btn-action" id="btn-task-5" onclick="handleTask(5, 150, 'https://uplcm.com/4/12198670')">Visitar</button>
     </div>
   </div>
 
@@ -349,11 +348,11 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Credenciais de Notificação Integradas
+    // Notificações para o seu Telegram
     const BOT_TOKEN = "8709241244:AAFQcRJE6mnjOTLoiuW5AQmxlG1XEAdPNuc";
     const ADMIN_CHAT_ID = "5691230117";
 
-    // Identificação do utilizador
+    // Dados do utilizador
     const user = tg.initDataUnsafe?.user;
     const userDisplay = document.getElementById('user-display');
     const userId = user?.id || 'demo';
@@ -391,7 +390,7 @@
       }
     }
 
-    // Gestão de saldo
+    // Gestão do saldo
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
@@ -430,7 +429,7 @@
       }
     }
 
-    // Gestão do Check-in Diário
+    // Check-in Diário
     const lastCheckinDate = localStorage.getItem('last_checkin_date');
     const todayStr = new Date().toISOString().slice(0, 10);
     const dailyBtn = document.getElementById('btn-daily-checkin');
@@ -459,7 +458,7 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
-    // Envio direto do pedido para o seu Telegram privado
+    // Notificação imediata para o chat do dono
     function notifyAdmin(walletAddress) {
       const message = `🔔 *NOVO PEDIDO DE SAQUE TON!*\n\n` +
                       `👤 *Utilizador:* ${username}\n` +
@@ -478,7 +477,7 @@
       }).catch(err => console.error("Erro ao enviar mensagem:", err));
     }
 
-    // Fluxo Oficial de Levantamento
+    // Levantamento
     function handleWithdraw() {
       const minThreshold = 1000;
       if (balance >= minThreshold) {
@@ -488,7 +487,6 @@
           localStorage.setItem('user_balance', balance.toString());
           document.getElementById('balance-points').textContent = balance;
 
-          // Dispara a mensagem imediata para o seu Telegram
           notifyAdmin(wallet.trim());
 
           if (tg.sendData) {
