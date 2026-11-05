@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Crypto Rewards Mini App</title>
+  <title>TON Task Rewards</title>
   <!-- Telegram Web App SDK oficial -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -30,207 +30,246 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px;
       min-height: 100vh;
-    }
-
-    .header {
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      margin-bottom: 20px;
+      padding: 20px 16px;
     }
 
     .user-info {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-dim);
-      margin-bottom: 8px;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
     .balance-card {
       background: var(--card-bg);
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      width: 100%;
-      max-width: 420px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
       text-align: center;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
-    .balance-val {
-      font-size: 36px;
-      font-weight: 700;
+    .balance-label {
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .balance-value {
+      font-size: 42px;
+      font-weight: 800;
       color: var(--accent);
-      margin: 6px 0;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .balance-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
     }
 
     .tasks-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      margin-bottom: 24px;
     }
 
     .task-card {
       background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .task-details h4 {
+    .task-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .task-title {
       font-size: 15px;
-      margin-bottom: 4px;
-    }
-
-    .task-details span {
-      font-size: 13px;
-      color: var(--success);
       font-weight: 600;
     }
 
-    .btn {
-      background-color: var(--accent);
+    .task-reward {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .btn-action {
+      background: var(--accent);
       color: #0f172a;
       border: none;
+      outline: none;
       padding: 8px 16px;
-      border-radius: 8px;
       font-size: 13px;
       font-weight: 700;
+      border-radius: 8px;
       cursor: pointer;
       transition: opacity 0.2s;
     }
 
-    .btn:active {
+    .btn-action:active {
       opacity: 0.8;
     }
 
-    .btn:disabled {
-      background-color: #334155;
-      color: #64748b;
+    .btn-action.completed {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       cursor: not-allowed;
     }
 
-    .withdraw-box {
+    .withdraw-container {
       width: 100%;
-      max-width: 420px;
-      margin-top: 24px;
+      max-width: 400px;
+      margin-top: auto;
     }
 
     .btn-withdraw {
       width: 100%;
-      background-color: var(--success);
-      color: white;
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      outline: none;
       padding: 14px;
       font-size: 15px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-withdraw:active {
+      opacity: 0.85;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 16px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="user-info" id="user-display">Carregando dados...</div>
-  </div>
+  <div class="user-info" id="user-display">A carregar perfil...</div>
 
   <div class="balance-card">
-    <p style="color: var(--text-dim); font-size: 13px;">SALDO DISPONÍVEL</p>
-    <div class="balance-val" id="points">0</div>
-    <p style="color: var(--text-dim); font-size: 13px;">Pontos (Meta: 1000 = Retirada TON)</p>
+    <div class="balance-label">Saldo Disponível</div>
+    <div class="balance-value" id="balance-points">0</div>
+    <div class="balance-subtext">Pontos (Meta: 1000 = Retirada TON)</div>
   </div>
 
   <div class="tasks-container">
+    <!-- Tarefa 1 -->
     <div class="task-card">
       <div class="task-details">
-        <h4>Assistir Anúncio</h4>
-        <span>+50 Pontos</span>
+        <span class="task-title">Conhecer a Rede TON</span>
+        <span class="task-reward">+50 Pontos</span>
       </div>
-      <button class="btn" id="btn-ad" onclick="runTask('ad', 50, 5000)">Assistir</button>
+      <button class="btn-action" id="btn-task-1" onclick="handleTask(1, 50, 'https://ton.org')">Visitar</button>
     </div>
 
+    <!-- Tarefa 2 -->
     <div class="task-card">
       <div class="task-details">
-        <h4>Entrar no Canal Parceiro</h4>
-        <span>+100 Pontos</span>
+        <span class="task-title">Entrar no Canal Oficial</span>
+        <span class="task-reward">+100 Pontos</span>
       </div>
-      <button class="btn" id="btn-tg" onclick="openChannel('https://t.me/seucanal', 'tg', 100)">Entrar</button>
+      <button class="btn-action" id="btn-task-2" onclick="handleTask(2, 100, 'https://t.me/telegram')">Entrar</button>
     </div>
 
+    <!-- Tarefa 3 -->
     <div class="task-card">
       <div class="task-details">
-        <h4>Visitar Link Promocional</h4>
-        <span>+30 Pontos</span>
+        <span class="task-title">Explorador TON Scan</span>
+        <span class="task-reward">+30 Pontos</span>
       </div>
-      <button class="btn" id="btn-link" onclick="openLink('https://seusite.com', 'link', 30)">Visitar</button>
+      <button class="btn-action" id="btn-task-3" onclick="handleTask(3, 30, 'https://tonscan.org')">Verificar</button>
     </div>
   </div>
 
-  <div class="withdraw-box">
-    <button class="btn btn-withdraw" onclick="solicitarSaque()">Solicitar Retirada</button>
+  <div class="withdraw-container">
+    <button class="btn-withdraw" onclick="handleWithdraw()">Solicitar Retirada</button>
   </div>
+
+  <div class="footer">@Zindoprofx_bot</div>
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.ready();
     tg.expand();
 
-    // Identificação do Usuário
+    // Identificação do utilizador
     const user = tg.initDataUnsafe?.user;
-    const userDisplay = document.getElementById("user-display");
-    const pointsDisplay = document.getElementById("points");
-
-    let points = parseInt(localStorage.getItem("user_points") || "0");
-    pointsDisplay.textContent = points;
-
+    const userDisplay = document.getElementById('user-display');
     if (user) {
       userDisplay.textContent = `ID: ${user.id} | @${user.username || user.first_name}`;
     } else {
-      userDisplay.textContent = "Ambiente de Teste (Navegador)";
+      userDisplay.textContent = "Ambiente de Teste Local";
     }
 
-    function addPoints(qty) {
-      points += qty;
-      localStorage.setItem("user_points", points);
-      pointsDisplay.textContent = points;
-      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
-    }
+    // Gestão de saldo e tarefas
+    let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
+    document.getElementById('balance-points').textContent = balance;
 
-    function runTask(id, reward, delay) {
-      const btn = document.getElementById(`btn-${id}`);
-      btn.disabled = true;
-      btn.textContent = "Validando...";
-
-      // Simulação de script de monetização / visualização de anúncio
-      setTimeout(() => {
-        addPoints(reward);
+    const completedTasks = JSON.parse(localStorage.getItem('completed_tasks') || '[]');
+    completedTasks.forEach(taskId => {
+      const btn = document.getElementById(`btn-task-${taskId}`);
+      if (btn) {
         btn.textContent = "Concluído";
-      }, delay);
-    }
-
-    function openChannel(url, id, reward) {
-      tg.openTelegramLink(url);
-      runTask(id, reward, 8000);
-    }
-
-    function openLink(url, id, reward) {
-      tg.openLink(url);
-      runTask(id, reward, 4000);
-    }
-
-    function solicitarSaque() {
-      if (points < 1000) {
-        tg.showAlert(`Você precisa de pelo menos 1000 pontos. Saldo atual: ${points}`);
-        return;
+        btn.classList.add("completed");
+        btn.disabled = true;
       }
-      
-      // Envia os dados de saque direto para o bot via webhook/mensagem de fechamento
-      tg.sendData(JSON.stringify({ action: "withdraw", points: points, user_id: user?.id }));
-      tg.showAlert("Solicitação enviada com sucesso ao bot!");
+    });
+
+    function handleTask(taskId, points, url) {
+      if (completedTasks.includes(taskId)) return;
+
+      // Abrir o link através da API do Telegram ou navegador
+      if (tg.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
+
+      // Atribuir recompensa
+      balance += points;
+      completedTasks.push(taskId);
+
+      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem('completed_tasks', JSON.stringify(completedTasks));
+
+      document.getElementById('balance-points').textContent = balance;
+      const btn = document.getElementById(`btn-task-${taskId}`);
+      if (btn) {
+        btn.textContent = "Concluído";
+        btn.classList.add("completed");
+        btn.disabled = true;
+      }
+    }
+
+    function handleWithdraw() {
+      if (balance >= 1000) {
+        tg.showAlert("Parabéns! O seu pedido de levantamento de TON foi enviado para análise da equipa.");
+      } else {
+        tg.showAlert(`Você precisa de pelo menos 1000 pontos. Saldo atual: ${balance}`);
+      }
     }
   </script>
 </body>
