@@ -15,6 +15,7 @@
       --text-dim: #94a3b8;
       --success: #22c55e;
       --warning: #f59e0b;
+      --purple: #a855f7;
     }
 
     * {
@@ -38,7 +39,7 @@
     .user-info {
       font-size: 13px;
       color: var(--text-dim);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       text-align: center;
     }
 
@@ -50,7 +51,7 @@
       text-align: center;
       width: 100%;
       max-width: 400px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
@@ -78,12 +79,83 @@
     .section-title {
       width: 100%;
       max-width: 400px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin: 10px 0 8px 4px;
+    }
+
+    .card-block {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 14px;
+    }
+
+    .referral-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .referral-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .referral-reward {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    .referral-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .referral-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-share {
+      flex: 1;
+      background: var(--purple);
+      color: #ffffff;
+      border: none;
+      outline: none;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      outline: none;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-share:active, .btn-copy:active {
+      opacity: 0.8;
     }
 
     .tasks-container {
@@ -92,7 +164,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .task-card {
@@ -194,6 +266,22 @@
     <div class="balance-subtext">Pontos (Meta: 1000 = Retirada TON)</div>
   </div>
 
+  <!-- Sistema de Convites -->
+  <div class="section-title">Programa de Indicação</div>
+  <div class="card-block">
+    <div class="referral-header">
+      <span class="referral-title">Convidar Amigos</span>
+      <span class="referral-reward">+150 Pontos / Amigo</span>
+    </div>
+    <div class="referral-desc">
+      Partilhe o seu link exclusivo. Cada amigo que entrar através do seu convite garante pontos imediatos para o seu saldo!
+    </div>
+    <div class="referral-actions">
+      <button class="btn-share" onclick="shareReferralLink()">Convidar no Telegram</button>
+      <button class="btn-copy" onclick="copyReferralLink()">Copiar</button>
+    </div>
+  </div>
+
   <!-- Recompensa Diária -->
   <div class="section-title">Recompensa Diária</div>
   <div class="tasks-container">
@@ -206,7 +294,7 @@
     </div>
   </div>
 
-  <!-- Tarefas de Exploração & Tráfego -->
+  <!-- Tarefas de Exploração -->
   <div class="section-title">Tarefas de Exploração</div>
   <div class="tasks-container">
     <div class="task-card">
@@ -263,10 +351,39 @@
     // Identificação do utilizador
     const user = tg.initDataUnsafe?.user;
     const userDisplay = document.getElementById('user-display');
+    const userId = user?.id || 'demo';
+
     if (user) {
       userDisplay.textContent = `ID: ${user.id} | @${user.username || user.first_name}`;
     } else {
       userDisplay.textContent = "Ambiente de Teste Local";
+    }
+
+    // Link de indicação dinâmico
+    const botUsername = "Zindoprofx_bot";
+    const refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+
+    function copyReferralLink() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(refLink).then(() => {
+          tg.showAlert("Link copiado para a área de transferência!");
+        }).catch(() => {
+          prompt("Copie o seu link de convite:", refLink);
+        });
+      } else {
+        prompt("Copie o seu link de convite:", refLink);
+      }
+    }
+
+    function shareReferralLink() {
+      const shareText = encodeURIComponent("Junta-te a mim no TON Task Rewards e ganha Toncoin a cumprir tarefas simples!");
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${shareText}`;
+      
+      if (tg.openTelegramLink) {
+        tg.openTelegramLink(shareUrl);
+      } else {
+        window.open(shareUrl, '_blank');
+      }
     }
 
     // Gestão de saldo
