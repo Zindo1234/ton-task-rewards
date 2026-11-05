@@ -14,6 +14,7 @@
       --text: #f8fafc;
       --text-dim: #94a3b8;
       --success: #22c55e;
+      --warning: #f59e0b;
     }
 
     * {
@@ -37,7 +38,7 @@
     .user-info {
       font-size: 13px;
       color: var(--text-dim);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
@@ -45,28 +46,28 @@
       background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
       width: 100%;
       max-width: 400px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
     .balance-label {
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--text-dim);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .balance-value {
-      font-size: 42px;
+      font-size: 38px;
       font-weight: 800;
       color: var(--accent);
       line-height: 1;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .balance-subtext {
@@ -74,20 +75,31 @@
       color: var(--text-dim);
     }
 
+    .section-title {
+      width: 100%;
+      max-width: 400px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 10px 0 8px 4px;
+    }
+
     .tasks-container {
       width: 100%;
       max-width: 400px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
     .task-card {
       background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -96,18 +108,18 @@
     .task-details {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .task-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
     }
 
     .task-reward {
       font-size: 12px;
       color: var(--accent);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .btn-action {
@@ -115,12 +127,17 @@
       color: #0f172a;
       border: none;
       outline: none;
-      padding: 8px 16px;
+      padding: 8px 14px;
       font-size: 13px;
       font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
       transition: opacity 0.2s;
+    }
+
+    .btn-daily {
+      background: var(--warning);
+      color: #0f172a;
     }
 
     .btn-action:active {
@@ -137,7 +154,8 @@
     .withdraw-container {
       width: 100%;
       max-width: 400px;
-      margin-top: auto;
+      margin-top: 10px;
+      margin-bottom: 16px;
     }
 
     .btn-withdraw {
@@ -161,14 +179,14 @@
     .footer {
       font-size: 11px;
       color: var(--text-dim);
-      margin-top: 16px;
+      margin-top: auto;
       text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <div class="user-info" id="user-display">A carregar perfil...</div>
+  <div class="user-info" id="user-display">A carregar utilizador...</div>
 
   <div class="balance-card">
     <div class="balance-label">Saldo Disponível</div>
@@ -176,8 +194,21 @@
     <div class="balance-subtext">Pontos (Meta: 1000 = Retirada TON)</div>
   </div>
 
+  <!-- Recompensa Diária -->
+  <div class="section-title">Recompensa Diária</div>
   <div class="tasks-container">
-    <!-- Tarefa 1 -->
+    <div class="task-card">
+      <div class="task-details">
+        <span class="task-title">Bónus Diário (Check-in)</span>
+        <span class="task-reward">+100 Pontos Diários</span>
+      </div>
+      <button class="btn-action btn-daily" id="btn-daily-checkin" onclick="handleDailyCheckin()">Recolher</button>
+    </div>
+  </div>
+
+  <!-- Tarefas de Exploração & Tráfego -->
+  <div class="section-title">Tarefas de Exploração</div>
+  <div class="tasks-container">
     <div class="task-card">
       <div class="task-details">
         <span class="task-title">Conhecer a Rede TON</span>
@@ -186,22 +217,36 @@
       <button class="btn-action" id="btn-task-1" onclick="handleTask(1, 50, 'https://ton.org')">Visitar</button>
     </div>
 
-    <!-- Tarefa 2 -->
     <div class="task-card">
       <div class="task-details">
-        <span class="task-title">Entrar no Canal Oficial</span>
+        <span class="task-title">Entrar no Canal Parceiro</span>
         <span class="task-reward">+100 Pontos</span>
       </div>
       <button class="btn-action" id="btn-task-2" onclick="handleTask(2, 100, 'https://t.me/telegram')">Entrar</button>
     </div>
 
-    <!-- Tarefa 3 -->
     <div class="task-card">
       <div class="task-details">
         <span class="task-title">Explorador TON Scan</span>
         <span class="task-reward">+30 Pontos</span>
       </div>
       <button class="btn-action" id="btn-task-3" onclick="handleTask(3, 30, 'https://tonscan.org')">Verificar</button>
+    </div>
+
+    <div class="task-card">
+      <div class="task-details">
+        <span class="task-title">Carteiras TON Oficial</span>
+        <span class="task-reward">+60 Pontos</span>
+      </div>
+      <button class="btn-action" id="btn-task-4" onclick="handleTask(4, 60, 'https://ton.org/wallets')">Explorar</button>
+    </div>
+
+    <div class="task-card">
+      <div class="task-details">
+        <span class="task-title">DApps da Rede TON</span>
+        <span class="task-reward">+40 Pontos</span>
+      </div>
+      <button class="btn-action" id="btn-task-5" onclick="handleTask(5, 40, 'https://ton.app')">Aceder</button>
     </div>
   </div>
 
@@ -224,10 +269,11 @@
       userDisplay.textContent = "Ambiente de Teste Local";
     }
 
-    // Gestão de saldo e tarefas
+    // Gestão de saldo
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
+    // Gestão de tarefas únicas
     const completedTasks = JSON.parse(localStorage.getItem('completed_tasks') || '[]');
     completedTasks.forEach(taskId => {
       const btn = document.getElementById(`btn-task-${taskId}`);
@@ -241,14 +287,12 @@
     function handleTask(taskId, points, url) {
       if (completedTasks.includes(taskId)) return;
 
-      // Abrir o link através da API do Telegram ou navegador
       if (tg.openLink) {
         tg.openLink(url);
       } else {
         window.open(url, '_blank');
       }
 
-      // Atribuir recompensa
       balance += points;
       completedTasks.push(taskId);
 
@@ -264,9 +308,38 @@
       }
     }
 
+    // Gestão do Check-in Diário
+    const lastCheckinDate = localStorage.getItem('last_checkin_date');
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const dailyBtn = document.getElementById('btn-daily-checkin');
+
+    if (lastCheckinDate === todayStr) {
+      dailyBtn.textContent = "Concluído";
+      dailyBtn.classList.add("completed");
+      dailyBtn.disabled = true;
+    }
+
+    function handleDailyCheckin() {
+      if (localStorage.getItem('last_checkin_date') === todayStr) {
+        tg.showAlert("Já recolheu o seu bónus diário hoje. Volte amanhã!");
+        return;
+      }
+
+      balance += 100;
+      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem('last_checkin_date', todayStr);
+
+      document.getElementById('balance-points').textContent = balance;
+      dailyBtn.textContent = "Concluído";
+      dailyBtn.classList.add("completed");
+      dailyBtn.disabled = true;
+
+      tg.showAlert("Parabéns! Ganhou +100 pontos no seu check-in diário!");
+    }
+
     function handleWithdraw() {
       if (balance >= 1000) {
-        tg.showAlert("Parabéns! O seu pedido de levantamento de TON foi enviado para análise da equipa.");
+        tg.showAlert("Parabéns! Atingiu a meta de 1000 pontos. O pedido foi submetido com sucesso!");
       } else {
         tg.showAlert(`Você precisa de pelo menos 1000 pontos. Saldo atual: ${balance}`);
       }
