@@ -260,7 +260,7 @@
 
   <div class="user-info" id="user-display">A carregar utilizador...</div>
 
-  <!-- Cartão de Saldo -->
+  <!-- Cartão de Saldo (Sem o atalho secreto) -->
   <div class="balance-card">
     <div class="balance-label">Saldo Disponível</div>
     <div class="balance-value" id="balance-points">0</div>
@@ -391,7 +391,7 @@
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
-    // Gestão de tarefas
+    // Gestão de tarefas únicas
     const completedTasks = JSON.parse(localStorage.getItem('completed_tasks') || '[]');
     completedTasks.forEach(taskId => {
       const btn = document.getElementById(`btn-task-${taskId}`);
@@ -455,18 +455,18 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
-    // Fluxo Oficial de Levantamento (1000 Pontos)
+    // Fluxo Oficial de Retirada (1000 pontos = 0.1 TON)
     function handleWithdraw() {
       const minThreshold = 1000;
       if (balance >= minThreshold) {
         const wallet = prompt("Parabéns! Atingiu a meta de 1000 pontos.\nInsira o seu endereço de carteira TON (ex: UQ... ou EQ...):");
         if (wallet && wallet.trim().length > 10) {
-          // Desconta os 1000 pontos após a submissão
+          // Desconta os 1000 pontos utilizados
           balance -= minThreshold;
           localStorage.setItem('user_balance', balance.toString());
           document.getElementById('balance-points').textContent = balance;
 
-          // Envia os dados para o bot fechar e registar no chat
+          // Envia o registo para fecho no Telegram
           if (tg.sendData) {
             tg.sendData(JSON.stringify({
               action: "withdraw",
