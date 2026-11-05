@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TON Task Rewards</title>
-  <!-- Telegram Web App SDK oficial -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -349,14 +348,6 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // RESET AUTOMÁTICO DE DADOS DE TESTE (executa apenas uma vez e zera os 1080 pontos)
-    if (!localStorage.getItem('production_reset_v1')) {
-      localStorage.removeItem('user_balance');
-      localStorage.removeItem('completed_tasks');
-      localStorage.removeItem('last_checkin_date');
-      localStorage.setItem('production_reset_v1', 'true');
-    }
-
     // Identificação do utilizador
     const user = tg.initDataUnsafe?.user;
     const userDisplay = document.getElementById('user-display');
@@ -395,7 +386,7 @@
       }
     }
 
-    // Gestão de saldo
+    // Gestão do saldo
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
@@ -463,7 +454,7 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
-    // Fluxo Oficial de Levantamento (1000 Pontos)
+    // Fluxo Oficial de Levantamento
     function handleWithdraw() {
       const minThreshold = 1000;
       if (balance >= minThreshold) {
@@ -473,6 +464,7 @@
           localStorage.setItem('user_balance', balance.toString());
           document.getElementById('balance-points').textContent = balance;
 
+          // Envia o registo oficial do levantamento para o bot
           if (tg.sendData) {
             tg.sendData(JSON.stringify({
               action: "withdraw",
