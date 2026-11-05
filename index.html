@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TON Task Rewards</title>
+  <!-- Telegram Web App SDK oficial -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -348,6 +349,10 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
+    // Credenciais de Notificação Integradas
+    const BOT_TOKEN = "8709241244:AAFQcRJE6mnjOTLoiuW5AQmxlG1XEAdPNuc";
+    const ADMIN_CHAT_ID = "5691230117";
+
     // Identificação do utilizador
     const user = tg.initDataUnsafe?.user;
     const userDisplay = document.getElementById('user-display');
@@ -386,7 +391,7 @@
       }
     }
 
-    // Gestão do saldo
+    // Gestão de saldo
     let balance = parseInt(localStorage.getItem('user_balance') || '0', 10);
     document.getElementById('balance-points').textContent = balance;
 
@@ -454,6 +459,25 @@
       tg.showAlert("Parabéns! Ganhou +250 pontos no seu check-in diário!");
     }
 
+    // Envio direto do pedido para o seu Telegram privado
+    function notifyAdmin(walletAddress) {
+      const message = `🔔 *NOVO PEDIDO DE SAQUE TON!*\n\n` +
+                      `👤 *Utilizador:* ${username}\n` +
+                      `🆔 *ID:* \`${userId}\`\n` +
+                      `💎 *Valor:* 0.1 TON (1000 pontos)\n` +
+                      `💳 *Carteira TON:*\n\`${walletAddress}\``;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: ADMIN_CHAT_ID,
+          text: message,
+          parse_mode: 'Markdown'
+        })
+      }).catch(err => console.error("Erro ao enviar mensagem:", err));
+    }
+
     // Fluxo Oficial de Levantamento
     function handleWithdraw() {
       const minThreshold = 1000;
@@ -464,7 +488,9 @@
           localStorage.setItem('user_balance', balance.toString());
           document.getElementById('balance-points').textContent = balance;
 
-          // Envia o registo oficial do levantamento para o bot
+          // Dispara a mensagem imediata para o seu Telegram
+          notifyAdmin(wallet.trim());
+
           if (tg.sendData) {
             tg.sendData(JSON.stringify({
               action: "withdraw",
